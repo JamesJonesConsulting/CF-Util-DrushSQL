@@ -1,0 +1,6 @@
+Revision history for Perl extension CF::Util::DrushSQL.
+
+0.01  Tue Dec  1 22:01:43 2015
+	- original version; created by h2xs 1.23 with options
+		-AX -n CF::Util::DrushSQL
+
