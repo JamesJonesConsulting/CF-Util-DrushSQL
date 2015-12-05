@@ -1,11 +1,14 @@
 package CF::Util::DrushSQL;
 use 5.022000;
+use Text::CSV;
 use namespace::autoclean;
 use Moose;
 
 our $VERSION = '0.01';
 
 has 'drush' => ( is => 'rw', isa => 'Str' );
+has 'drupal_root' => ( is => 'rw', isa => 'Str' );
+has 'csv' => ( is => 'rw', isa => 'Text::CSV', init_arg => undef);
 
 sub get_queries {
     my $field_list = "(entity_type, bundle, deleted, entity_id, revision_id, language, delta, %s)";
@@ -29,6 +32,33 @@ sub get_queries {
                 sql_begin_transaction => "BEGIN;",
                sql_commit_transaction => "COMMIT;",
              sql_rollback_transaction => "ROLLBACK;",
+    }
+}
+sub query {
+    my($self,$sql) = @_;
+    my @rows;
+    $command = $self->drush) . " " . qq(sqlq "$sql") . " -r " . $self->drupal_root();
+    my $sql_result = `$command`;
+    open my ($str_fh), '<', \$sql_result;
+    while ( my $row = $self->get_csv()->getline( $str_fh ) ) {
+        push @rows, $row;
+    }
+#    my @results = `$command`;
+#    chomp(@results);
+#    // sep_char \t
+    close $str_fh;
+    return @rows;
+}
+sub get_node_meta_data_sql {
+    my($self,$nid) = @_;
+    return $self->get_queries()->{'sql_get_node_meta_data'}, $nid;
+}
+sub get_csv {
+    if($self->csv) {
+        return $self->csv();
+    } else {
+        $self->csv(Text::CSV->new ({ binary => 1, eol => $/, sep_char => '\t' }));
+        return $self->csv();
     }
 }
 
