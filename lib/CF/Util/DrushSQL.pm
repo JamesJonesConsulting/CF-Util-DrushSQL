@@ -36,31 +36,33 @@ sub get_queries {
 }
 sub query {
     my($self,$sql) = @_;
-    my @rows;
+    my @rows = ();
     my $command = $self->drush() . " " . qq(sqlq "$sql") . " -r " . $self->drupal_root();
     my $sql_result = `$command`;
-    open my ($str_fh), '<', \$sql_result;
-    while ( my $row = $self->get_csv()->getline( $str_fh ) ) {
-        if(scalar @{$row} = 1 ? $row->[1] ne '' : scalar @{$row} > 1) {
+    chomp($sql_result);
+    if($sql_result ne '') {
+        open my ($str_fh), '<', \$sql_result;
+        while ( my $row = $self->get_csv()->getline( $str_fh ) ) {
             push @rows, $row;
-        }
-    }
-#    my @results = `$command`;
-#    chomp(@results);
-#    // sep_char \t
-    close $str_fh;
+        }    
+        close $str_fh;
+    }    
     return @rows;
 }
 sub get_node_meta_data_sql {
     my($self,$nid) = @_;
     return sprintf $self->get_queries()->{'sql_get_node_meta_data'}, $nid;
 }
+sub get_list_vocabularies_sql {
+    my($self) = @_;
+    return sprintf $self->get_queries()->{'sql_list_vocabularies'};
+}
 sub get_csv {
     my($self) = @_;
     if($self->csv) {
         return $self->csv();
     } else {
-        $self->csv(Text::CSV->new ({ binary => 1, eol => $/, sep_char => '\t' }));
+        $self->csv(Text::CSV->new ({ binary => 1, eol => $/, sep_char => "\t" }));
         return $self->csv();
     }
 }
