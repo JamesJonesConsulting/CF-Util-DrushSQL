@@ -47,7 +47,7 @@ sub query {
         }    
         close $str_fh;
     }    
-    return @rows;
+    return \@rows;
 }
 sub get_node_meta_data_sql {
     my($self,$nid) = @_;
