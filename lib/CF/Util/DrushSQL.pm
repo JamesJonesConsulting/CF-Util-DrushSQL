@@ -51,7 +51,7 @@ sub query {
 }
 sub get_node_meta_data_sql {
     my($self,$nid) = @_;
-    return $self->get_queries()->{'sql_get_node_meta_data'}, $nid;
+    return sprintf $self->get_queries()->{'sql_get_node_meta_data'}, $nid;
 }
 sub get_csv {
     my($self) = @_;
