@@ -37,7 +37,7 @@ sub get_queries {
 sub query {
     my($self,$sql) = @_;
     my @rows;
-    $command = $self->drush) . " " . qq(sqlq "$sql") . " -r " . $self->drupal_root();
+    my $command = $self->drush() . " " . qq(sqlq "$sql") . " -r " . $self->drupal_root();
     my $sql_result = `$command`;
     open my ($str_fh), '<', \$sql_result;
     while ( my $row = $self->get_csv()->getline( $str_fh ) ) {
@@ -54,6 +54,7 @@ sub get_node_meta_data_sql {
     return $self->get_queries()->{'sql_get_node_meta_data'}, $nid;
 }
 sub get_csv {
+    my($self) = @_;
     if($self->csv) {
         return $self->csv();
     } else {
