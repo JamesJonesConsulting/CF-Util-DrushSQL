@@ -41,7 +41,9 @@ sub query {
     my $sql_result = `$command`;
     open my ($str_fh), '<', \$sql_result;
     while ( my $row = $self->get_csv()->getline( $str_fh ) ) {
-        push @rows, $row;
+        if(scalar @{$row} = 1 ? $row->[1] ne '' : scalar @{$row} > 1) {
+            push @rows, $row;
+        }
     }
 #    my @results = `$command`;
 #    chomp(@results);
